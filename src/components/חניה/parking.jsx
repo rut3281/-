@@ -141,32 +141,92 @@
 
           console.log("מיקום יחסי:", relativeX, relativeY);
 
-          // קביעת נקודות המסלול בהתאם למיקום החניה
-          const pathPoints = [];
+          // מיקומי הכבישים בדיוק כפי שהם מוגדרים ב-CSS
+          const topRoadY = 0.015;       // top: 15px בערך 1.5% מגובה החניון
+          const middleRoad1Y = 0.33;    // top: 33%
+          const middleRoad2Y = 0.66;    // top: 66%
+          const bottomRoadY = 0.97;     // top: 97%
+
+          // ערכים מדויקים מה-CSS
+          const leftEdgeX = 0.01;       // left: 1% - מהקוד .path-left
+          const rightEdgeX = 0.99;      // left: 99% - מהקוד .path-right-1
 
           // נקודת התחלה - כניסה
-          pathPoints.push({ x: 0.05, y: 0.05 });
+          // לפי ה-CSS, הכניסה נמצאת ב-7% מהצד השמאלי של הכביש העליון
+          const entranceX = 0.07;       // left: 7% - מהקוד .path-top
 
-          // אם החניה בחלק העליון
-          if (relativeY < 0.33) {
-              pathPoints.push({ x: relativeX, y: 0.05 });
-              pathPoints.push({ x: relativeX, y: relativeY });
-          }
-          // אם החניה בחלק האמצעי
-          else if (relativeY < 0.66) {
-              pathPoints.push({ x: 0.95, y: 0.05 });
-              pathPoints.push({ x: 0.95, y: 0.33 });
-              pathPoints.push({ x: relativeX, y: 0.33 });
-              pathPoints.push({ x: relativeX, y: relativeY });
-          }
-          // אם החניה בחלק התחתון
-          else {
-              pathPoints.push({ x: 0.95, y: 0.05 });
-              pathPoints.push({ x: 0.95, y: 0.33 });
-              pathPoints.push({ x: 0.05, y: 0.33 });
-              pathPoints.push({ x: 0.05, y: 0.66 });
-              pathPoints.push({ x: relativeX, y: 0.66 });
-              pathPoints.push({ x: relativeX, y: relativeY });
+          // קביעת נקודות המסלול בדיוק על קווי הכביש
+          const pathPoints = [];  // הגדרת המשתנה pathPoints
+
+          // נקודת התחלה - כניסה
+          pathPoints.push({ x: entranceX, y: topRoadY });
+
+          // זיהוי השורה של החניה (0-5)
+          const row = Math.floor(relativeY * 6);
+
+          // זיהוי אם החניה בשורה זוגית או אי-זוגית (חשוב לקביעת כיוון הגישה)
+          const isEvenRow = row % 2 === 0;
+
+          // בחירת המסלול הקצר ביותר שעובר רק על קווי הכביש
+          // ומתחשב בכך שהכניסה לחניה היא רק מהצד הלא צמוד
+
+          if (row < 2) {
+              // חניות בשורות העליונות (0-1)
+              // בשורה 0 (זוגית) - הכניסה מלמעלה
+              // בשורה 1 (אי-זוגית) - הכניסה מלמטה
+
+              if (isEvenRow) {
+                  // שורה 0 - כניסה מלמעלה
+                  pathPoints.push({ x: relativeX, y: topRoadY });
+                  pathPoints.push({ x: relativeX, y: relativeY });
+              } else {
+                  // שורה 1 - כניסה מלמטה (מהכביש האמצעי העליון)
+                  pathPoints.push({ x: rightEdgeX, y: topRoadY });
+                  pathPoints.push({ x: rightEdgeX, y: middleRoad1Y });
+                  pathPoints.push({ x: relativeX, y: middleRoad1Y });
+                  pathPoints.push({ x: relativeX, y: relativeY });
+              }
+          } else if (row < 4) {
+              // חניות בשורות האמצעיות (2-3)
+              // בשורה 2 (זוגית) - הכניסה מלמעלה
+              // בשורה 3 (אי-זוגית) - הכניסה מלמטה
+
+              if (isEvenRow) {
+                  // שורה 2 - כניסה מלמעלה (מהכביש האמצעי העליון)
+                  pathPoints.push({ x: leftEdgeX, y: topRoadY });
+                  pathPoints.push({ x: leftEdgeX, y: middleRoad1Y });
+                  pathPoints.push({ x: relativeX, y: middleRoad1Y });
+                  pathPoints.push({ x: relativeX, y: relativeY });
+              } else {
+                  // שורה 3 - כניסה מלמטה (מהכביש האמצעי התחתון)
+                  pathPoints.push({ x: leftEdgeX, y: topRoadY });
+                  pathPoints.push({ x: leftEdgeX, y: middleRoad2Y });
+                  pathPoints.push({ x: relativeX, y: middleRoad2Y });
+                  pathPoints.push({ x: relativeX, y: relativeY });
+              }
+          } else {
+              // חניות בשורות התחתונות (4-5)
+              // בשורה 4 (זוגית) - הכניסה מלמעלה
+              // בשורה 5 (אי-זוגית) - הכניסה מלמטה
+
+              if (isEvenRow) {
+                  // שורה 4 - כניסה מלמעלה (מהכביש האמצעי התחתון)
+                  pathPoints.push({ x: rightEdgeX, y: topRoadY });
+                  pathPoints.push({ x: rightEdgeX, y: middleRoad1Y });
+                  pathPoints.push({ x: rightEdgeX, y: middleRoad2Y });
+                  pathPoints.push({ x: relativeX, y: middleRoad2Y });
+                  pathPoints.push({ x: relativeX, y: relativeY });
+              } else {
+                  // שורה 5 - כניסה מלמטה (מהכביש התחתון)
+                  pathPoints.push({ x: rightEdgeX, y: topRoadY });
+                  pathPoints.push({ x: rightEdgeX, y: middleRoad1Y });
+                  pathPoints.push({ x: rightEdgeX, y: middleRoad2Y });
+                  pathPoints.push({ x: rightEdgeX, y: bottomRoadY });
+                  pathPoints.push({ x: rightEdgeX, y: bottomRoadY });
+                  pathPoints.push({ x: rightEdgeX, y: bottomRoadY });
+                  pathPoints.push({ x: rightEdgeX, y: bottomRoadY });
+                  pathPoints.push({ x: relativeX, y: relativeY });
+              }
           }
 
           // יצירת קווי המסלול
@@ -232,10 +292,165 @@
           // הוספת המסלול לאזור החניה
           parkingGridRef.current.appendChild(pathElement);
 
+          // הוספת תיאור טקסטואלי של המסלול
+          const instructionsElement = document.createElement('div');
+          instructionsElement.className = 'path-instructions';
+          instructionsElement.style.position = 'absolute';
+          instructionsElement.style.bottom = '10px';
+          instructionsElement.style.left = '10px';
+          instructionsElement.style.backgroundColor = 'rgba(16, 185, 129, 0.9)';
+          instructionsElement.style.color = 'white';
+          instructionsElement.style.padding = '10px';
+          instructionsElement.style.borderRadius = '5px';
+          instructionsElement.style.zIndex = '25';
+          instructionsElement.style.maxWidth = '300px';
+          instructionsElement.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)';
+          instructionsElement.style.direction = 'rtl';
+          instructionsElement.style.textAlign = 'right';
+
+          // יצירת הוראות ניווט בהתאם למסלול
+          let instructions = '<strong>הוראות הגעה לחניה:</strong><ol>';
+
+          if (row < 2) {
+              // חניות בשורות העליונות (0-1)
+              if (isEvenRow) {
+                  // שורה 0 - כניסה מלמעלה
+                  instructions += '<li>סע ישירות בכביש העליון עד לנקודה מעל החניה</li>';
+                  instructions += '<li>רד ישירות לחניה</li>';
+              } else {
+                  // שורה 1 - כניסה מלמטה
+                  instructions += '<li>סע ימינה בכביש העליון</li>';
+                  instructions += '<li>רד בצד ימין לכביש האמצעי העליון</li>';
+                  instructions += '<li>סע שמאלה עד לנקודה מתחת לחניה</li>';
+                  instructions += '<li>עלה לחניה</li>';
+              }
+          } else if (row < 4) {
+              // חניות בשורות האמצעיות (2-3)
+              if (isEvenRow) {
+                  // שורה 2 - כניסה מלמעלה
+                  instructions += '<li>סע שמאלה בכביש העליון</li>';
+                  instructions += '<li>רד בצד שמאל לכביש האמצעי העליון</li>';
+                  instructions += '<li>סע ימינה עד לנקודה מעל החניה</li>';
+                  instructions += '<li>רד לחניה</li>';
+              } else {
+                  // שורה 3 - כניסה מלמטה
+                  instructions += '<li>סע שמאלה בכביש העליון</li>';
+                  instructions += '<li>רד בצד שמאל לכביש האמצעי התחתון</li>';
+                  instructions += '<li>סע ימינה עד לנקודה מתחת לחניה</li>';
+                  instructions += '<li>עלה לחניה</li>';
+              }
+          } else {
+              // חניות בשורות התחתונות (4-5)
+              if (isEvenRow) {
+                  // שורה 4 - כניסה מלמעלה
+                  instructions += '<li>סע ימינה בכביש העליון</li>';
+                  instructions += '<li>רד בצד ימין לכביש האמצעי העליון</li>';
+                  instructions += '<li>המשך ירידה לכביש האמצעי התחתון</li>';
+                  instructions += '<li>סע שמאלה עד לנקודה מעל החניה</li>';
+                  instructions += '<li>רד לחניה</li>';
+              } else {
+                  // שורה 5 - כניסה מלמטה
+                  instructions += '<li>סע ימינה בכביש העליון</li>';
+                  instructions += '<li>רד בצד ימין לכביש האמצעי העליון</li>';
+                  instructions += '<li>המשך ירידה לכביש האמצעי התחתון</li>';
+                  instructions += '<li>המשך ירידה לכביש התחתון</li>';
+                  instructions += '<li>סע שמאלה עד לנקודה מתחת לחניה</li>';
+                  instructions += '<li>עלה לחניה</li>';
+              }
+          }
+
+          instructions += '</ol>';
+          instructionsElement.innerHTML = instructions;
+
+          pathElement.appendChild(instructionsElement);
+
           // הוספת אנימציית רכב נוסע לאורך המסלול
           const carElement = document.createElement('div');
           carElement.className = 'moving-car';
-          carElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="5" width="12" height="10" rx="2"/><path d="M5 13h14"/><path d="M9 17l-2 4"/><path d="M15 17l2 4"/><path d="M5 13l-2-6h18l-2 6"/></svg>';
+          carElement.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="150" height="90" fill="none">
+    <!-- רקע מטאלי מודרני -->
+    <defs>
+        <linearGradient id="metalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#34495e;stop-opacity:1" />
+        </linearGradient>
+        
+        <filter id="shadowEffect">
+            <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="rgba(0,0,0,0.3)"/>
+        </filter>
+    </defs>
+
+    <!-- גוף הרכב - עיצוב אווירודינמי מודרני -->
+    <path 
+        d="M20,50 
+           Q40,30 60,25 
+           Q100,20 140,25 
+           Q160,30 180,50 
+           Q190,60 190,70 
+           L10,70 
+           Q10,60 20,50" 
+        fill="url(#metalGradient)" 
+        filter="url(#shadowEffect)"
+        stroke="#7f8c8d" 
+        stroke-width="1"
+    />
+
+    <!-- חלונות בסגנון מודרני -->
+    <path 
+        d="M40,35 L80,35 Q90,30 100,35 Q110,40 140,35" 
+        fill="#2980b9" 
+        fill-opacity="0.7" 
+        stroke="#3498db" 
+        stroke-width="0.5"
+    />
+
+    <!-- פרטי אירודינמיקה -->
+    <path 
+        d="M10,65 Q20,55 30,60 
+           Q40,65 50,60 
+           Q60,55 70,60" 
+        stroke="#34495e" 
+        stroke-width="1" 
+        fill="none" 
+        stroke-dasharray="3,3"
+    />
+
+    <!-- גלגלים מודרניים -->
+    <circle cx="50" cy="70" r="10" fill="#2c3e50" stroke="#7f8c8d" stroke-width="2"/>
+    <circle cx="150" cy="70" r="10" fill="#2c3e50" stroke="#7f8c8d" stroke-width="2"/>
+
+    <!-- פנסים קדמיים LED -->
+    <path 
+        d="M20,45 Q25,40 30,45 
+           Q35,50 40,45" 
+        stroke="#f1c40f" 
+        stroke-width="3" 
+        fill="none"
+    />
+
+    <!-- פנסים אחוריים מודרניים -->
+    <path 
+        d="M170,45 Q175,40 180,45 
+           Q185,50 190,45" 
+        stroke="#e74c3c" 
+        stroke-width="3" 
+        fill="none"
+    />
+
+    <!-- לוגו חברה דמיוני -->
+    <text 
+        x="100" 
+        y="25" 
+        text-anchor="middle" 
+        fill="#ecf0f1" 
+        font-size="10" 
+        font-weight="bold"
+    >
+        SMART
+    </text>
+</svg>
+`;
           carElement.style.position = 'absolute';
           carElement.style.width = '30px';
           carElement.style.height = '30px';
@@ -565,8 +780,8 @@
                               <div className="premium-logo">
                                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                       <rect width="24" height="24" rx="12" fill="url(#paint0_linear)" />
-                                      <path d="M18 12C11 8.69 15.31 6 12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12ZM8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16C9.79 16 8 14.21 8 12Z" fill="white" />
-                                      <path d="M13 10H11C11 10.45 10 15 11 15H11.5V13H13C13.55 13 14 12.55 14 12V11H14 10.45 13.55 10 13 10ZM13 12H11.5V11H13V12Z" fill="white" />
+                                      <path d="M18 12C18 8.69 15.31 6 12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12ZM8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16C9.79 16 8 14.21 8 12Z" fill="white" />
+                                      <path d="M13 10H11C11 9.45 10.55 9 10 9V12C10 12.55 10.45 13 11 13H11.5V11H13C13.55 11 14 10.55 14 10V9C14 8.45 13.55 8 13 8ZM13 10H11.5V9H13V10Z" fill="white" />
                                       <path d="M10 8L9 9H15L14 8H10Z" fill="white" />
                                       <path d="M10 16L9 15H15L14 16H10Z" fill="white" />
                                       <defs>
@@ -626,48 +841,55 @@
               {renderParkingGrid()}
 
               <div className="middle">
-                  {enter !== "true" && (
-                      <div>
-                          {enter !== "false" && (
-                              <button onClick={() => dispatch(getCarExists(licensePlate))}>
-                                  <DirectionsCar style={{ marginLeft: '8px' }} />
-                                  כניסה
-                              </button>
-                          )}
+            {enter !== "true" && (
+                <div>
+                    {enter !== "false" && (
+                        <button onClick={() => dispatch(getCarExists(licensePlate))}>
+                            <DirectionsCar style={{ marginLeft: '8px' }} />
+                            כניסה
+                        </button>
+                    )}
 
-                          {(current !== -1 && price !== -1) && (
-                              <>
-                                  <button onClick={handleSearchCar}>
-                                      <Search style={{ marginLeft: '8px' }} />
-                                      {searchState === "found" 
-                                          ? "לחץ כדי לראות את המסלול אל הרכב" 
-                                          : "חיפוש רכב קיים"}
-                                  </button>
-                                  <button onClick={() => {dispatch(getPriceThunk(licensePlate));navigate("/paying")}}>
-                                      <Payment style={{ marginLeft: '8px' }} />
-                                      יציאה ותשלום
-                                  </button>
-                              </>
-                          )}
+                    {(current !== -1 && price !== -1) && (
+                        <>
+                            <button onClick={handleSearchCar}>
+                                <Search style={{ marginLeft: '8px' }} />
+                                {searchState === "found"
+                                    ? "לחץ כדי לראות את המסלול אל הרכב"
+                                    : "חיפוש רכב קיים"}
+                            </button>
+                            <button onClick={() => { dispatch(getPriceThunk(licensePlate)) }}>
+                                <Payment style={{ marginLeft: '8px' }} />
+                                יציאה ותשלום
+                            </button>
+                        </>
+                    )}
 
-                          {enter === "false" && (
-                              <div className="status-indicator error">
-                                  <Info style={{ marginLeft: '8px' }} />
-                                  הרכב שלך כבר נמצא בחניה, במקרה של תקלה אנא פנה למנהל המערכת במספר 1234
-                              </div>
-                          )}
-                      </div>
-                  )}
+                    {enter === "false" && (
+                        <div className="status-indicator error">
+                            <Info style={{ marginLeft: '8px' }} />
+                            הרכב שלך כבר נמצא בחניה, במקרה של תקלה אנא פנה למנהל המערכת במספר 1234
+                        </div>
+                    )}
+                </div>
+            )}
 
-                  {enter === "true" && (
-                      <div>
-                          <button onClick={createRoutine}>
-                              <Check style={{ marginLeft: '8px' }} />
-                              אישור כניסה
-                          </button>
-                      </div>
-                  )}
-              </div>
-          </div>
+            {enter === "true" && (
+                <div>
+                    <button onClick={createRoutine}>
+                        <Check style={{ marginLeft: '8px' }} />
+                        אישור כניסה
+                    </button>
+                </div>
+            )}
+
+            {(current == -1 || price == -1) && <div>   ): הרכב שלך לא קיים בחניה  </div>}
+
+            {price > 0 && navigate(`/paying`)}
+        </div>
+        <div>{price}</div> 
+    </div>
+           
+         
       );
   };
