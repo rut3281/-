@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { addDriverThunk } from "../../redux/Thunks/addDriverThunk";
 import * as React from 'react';
 import './logon.css'; // שינוי: קישור לקובץ CSS החדש
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Box, Button, CircularProgress, TextField, Typography, Container, Card, CardContent, Grid, Stepper, Step, StepLabel , Alert , Snackbar } from "@mui/material";
 import { Person, Phone, DirectionsCar, Lock, Email  } from "@mui/icons-material";
 import { insertLicensePlate, insertPassword, insertUserName, setIsNew } from "../../redux/slices/driverSlice";

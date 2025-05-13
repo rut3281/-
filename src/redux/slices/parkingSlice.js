@@ -43,7 +43,7 @@ export const ParkingSlice = createSlice({
             
             console.log("enter");
             state.enter = action.payload;
-            if (state.enter == "true") {
+            if (state.enter === "true") {
                 state.avilable = state.carParkings.find(p => !p.used);
             }
 
