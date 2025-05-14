@@ -1,7 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { loginThunk } from "../Thunks/loginThunk";
-import { addDriverThunk } from "../Thunks/addDriverThunk";
-import { InsertLink } from "@mui/icons-material";
 import { getDriversCardsThunk } from "../Thunks/getDriversCardsThunk";
 import { addCreditCardThunk } from "../Thunks/addCreditCardThunk";
 

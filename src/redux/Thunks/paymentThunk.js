@@ -18,12 +18,12 @@ export const paymentThunk = createAsyncThunk(
                 blPayment: {
                   creditCardCode: blPayment.creditCardCode,
                   sum: blPayment.sum,
-                  date: "2025-04-27T12:41:57.724Z"
+                  date: blPayment.date,
                 },
                 blCreditCards: {
                   code: 0,
                   creditCardNum: blCreditCards.creditCardNum,
-                  validityCard: "2025-04-27T12:41:57.724Z",
+                  validityCard: blCreditCards.validityCard,
                   id: blCreditCards.id,
                   cvv: blCreditCards.cvv,
                   driverCode:blCreditCards.driverCode

@@ -608,12 +608,6 @@
 
           return (
               <>
-                  {/* Column Numbers */}
-                  <div className="column-numbers">
-                      {Array.from({ length: cols }, (_, i) => (
-                          <div key={`col-${i + 1}`} className="column-number">{i + 1}</div>
-                      ))}
-                  </div>
 
                   {/* Parking Grid */}
                   <div className="carParkings" ref={parkingGridRef}>
@@ -781,7 +775,7 @@
                                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                       <rect width="24" height="24" rx="12" fill="url(#paint0_linear)" />
                                       <path d="M18 12C18 8.69 15.31 6 12 6C8.69 6 6 8.69 6 12C6 15.31 8.69 18 12 18C15.31 18 18 15.31 18 12ZM8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16C9.79 16 8 14.21 8 12Z" fill="white" />
-                                      <path d="M13 10H11C11 9.45 10.55 9 10 9V12C10 12.55 10.45 13 11 13H11.5V11H13C13.55 11 14 10.55 14 10V9C14 8.45 13.55 8 13 8ZM13 10H11.5V9H13V10Z" fill="white" />
+                                      <path d="M13 10H11C10.45 10 10 10.45 10 11V14C10 14.55 10.45 15 11 15H11.5V13H13C13.55 13 14 12.55 14 12V11C14 10.45 13.55 10 13 10ZM13 12H11.5V11H13V12Z" fill="white" />
                                       <path d="M10 8L9 9H15L14 8H10Z" fill="white" />
                                       <path d="M10 16L9 15H15L14 16H10Z" fill="white" />
                                       <defs>
@@ -887,7 +881,7 @@
 
             {price > 0 && navigate(`/paying`)}
         </div>
-        <div>{price}</div> 
+  
     </div>
            
          

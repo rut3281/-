@@ -11,6 +11,7 @@ export const Routing = () => {
     return <div>
         <Routes>
             <Route path={'/'} element={<Login />} />
+            <Route path={'/home'} element={<Login />} />
             <Route path={'/login'} element={<Login />} />
             <Route path={'/logon'} element={<Logon />} />
             <Route path={'/login/confirm'} element={<Confirm/>} />

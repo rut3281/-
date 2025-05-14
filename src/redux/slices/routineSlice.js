@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import { addRoutineThunk } from "../Thunks/addRoutineThunk";
 import { findDriverCarThunk } from "../Thunks/findDriverCarThunk";
 import { getPriceThunk } from "../Thunks/getPriceThunk";
-import { getCarExists } from "../Thunks/getCarExists";
+
 
 
 const INITIAL_STATE_ROUTINE= {
@@ -45,4 +45,3 @@ export const RoutineSlice = createSlice({
         
     }
 })
-export const { } = RoutineSlice.actions;

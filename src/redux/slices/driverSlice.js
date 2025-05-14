@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { loginThunk } from "../Thunks/loginThunk";
 import { addDriverThunk } from "../Thunks/addDriverThunk";
-import { InsertLink } from "@mui/icons-material";
-import { paymentThunk } from "../Thunks/paymentThunk";
+
 
 
 const INITIAL_STATE_DRIVER = {
